@@ -13,27 +13,52 @@ class Game {
     this.createEntities();
     this.drawEntities();
 
-    window.addEventListener("resize", this.respondToViewportChanges.bind(this));
-    window.addEventListener("keydown", this.respondToUserKeyPress.bind(this));
+    window.addEventListener("keyup", this.listenToKeyUp.bind(this));
+    window.addEventListener("keydown", this.listenToKeyDown.bind(this));
+    window.addEventListener("user", this.listenToUserEvent.bind(this));
   }
 
+  listenToKeyUp(e) {
+    this.keys.delete(e.key);
+  }
+
+  listenToKeyDown(e) {
+    if (this.keys.has(e.key)) return console.log("pressed this key already");
+    this.keys.add(e.key);
+    this.createUserEvent({ keyPressed: e.key });
+  }
+
+  listenToUserEvent(e) {
+    const player = this.player;
+    const key = e.detail.keyPressed;
+
+    switch (key) {
+      case "ArrowUp":
+        player.y -= player.speed;
+        break;
+      case "ArrowDown":
+        player.y += player.speed;
+        break;
+      case "ArrowLeft":
+        player.x -= player.speed;
+        break;
+      case "ArrowRight":
+        player.x += player.speed;
+        break;
+    }
+
+    this.updatePlayerEntity();
+    this.drawPlayer();
+  }
+
+  createUserEvent(event) {
+    const userEvent = new CustomEvent("user", { detail: event });
+    window.dispatchEvent(userEvent);
+  }
+
+  inputRateLimitMs = 100;
   entities = {};
-
-  keyMap = {
-    w: {
-      types: ["keydown"],
-    },
-    a: {
-      types: ["keydown"],
-    },
-    s: {
-      types: ["keydown"],
-    },
-    d: {
-      types: ["keydown"],
-    },
-  };
-
+  keys = new Set();
   colors = {
     backgroundColor: "#1a1a1a",
     playerColor: "#3ca4be",
@@ -135,3 +160,35 @@ const game = new Game();
 function randomId() {
   return Math.trunc(Math.random() * 999999);
 }
+
+/* 
+ <script>
+  // Target object
+  const target = {
+    name: "Alice",
+    age: 30,
+  };
+
+  // Handler object with trap functions
+  const handler = {
+    get(target, property, receiver) {
+      console.log(`Getting ${property}`);
+      return Reflect.get(target, property, receiver);
+    },
+    set(target, property, value, receiver) {
+      console.log(`Setting ${property} to ${value}`);
+      return Reflect.set(target, property, value, receiver);
+    },
+  };
+
+  // Create a reactive proxy
+  const proxy = new Proxy(target, handler);
+
+  // Accessing a property triggers the "get" trap function
+  console.log(proxy.name); // Output: Getting name
+
+  // Modifying a property triggers the "set" trap function
+  proxy.age = 35; // Output: Setting age to 35
+</script>
+
+*/
