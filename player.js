@@ -16,8 +16,6 @@ export default class Player extends Entity {
       width: 50,
       height: 50,
       color: this.colors.backgroundColor,
-      dx: 1,
-      dy: 1,
       speed: 5,
     };
 
