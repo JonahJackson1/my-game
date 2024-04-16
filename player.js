@@ -21,13 +21,15 @@ export default class Player extends Entity {
       speed: 5,
     };
 
-    // Handler object with trap functions
+    // Handler object with trap functions fo
     const handler = {
-      get(player, property, receiver) {
+      get: (player, property, receiver) => {
         return Reflect.get(player, property, receiver);
       },
-      set(player, property, value, receiver) {
-        return Reflect.set(player, property, value, receiver);
+      set: (player, property, value, receiver) => {
+        Reflect.set(player, property, value, receiver);
+        this.updatePlayerEntity();
+        return true; // Indicate success
       },
     };
 
@@ -66,7 +68,6 @@ export default class Player extends Entity {
         player.x += player.speed;
         break;
     }
-    this.updatePlayerEntity();
   }
 
   createUserEvent(event) {
