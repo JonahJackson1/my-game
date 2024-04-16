@@ -25,13 +25,13 @@ export default class Player extends Entity {
       },
       set: (player, property, value, receiver) => {
         Reflect.set(player, property, value, receiver);
-        this.updatePlayerEntity();
+        this.updatePlayer();
         return true;
       },
     };
 
     this.player = new Proxy(this.playerObj, handler);
-    this.drawEntity(this.player);
+    this.draw(this.player);
 
     window.addEventListener("keyup", this.listenToKeyUp.bind(this));
     window.addEventListener("keydown", this.listenToKeyDown.bind(this));
@@ -66,8 +66,8 @@ export default class Player extends Entity {
     window.dispatchEvent(userEvent);
   }
 
-  updatePlayerEntity() {
-    this.clearEntity(this.player);
-    this.drawEntity(this.player);
+  updatePlayer() {
+    this.clear(this.player);
+    this.draw(this.player);
   }
 }
