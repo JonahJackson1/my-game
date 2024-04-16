@@ -21,7 +21,6 @@ export default class Player extends Entity {
       speed: 5,
     };
 
-    // Handler object with trap functions fo
     const handler = {
       get: (player, property, receiver) => {
         return Reflect.get(player, property, receiver);
@@ -29,7 +28,7 @@ export default class Player extends Entity {
       set: (player, property, value, receiver) => {
         Reflect.set(player, property, value, receiver);
         this.updatePlayerEntity();
-        return true; // Indicate success
+        return true;
       },
     };
 
@@ -50,24 +49,18 @@ export default class Player extends Entity {
     this.createUserEvent({ keyPressed: e.key });
   }
 
-  listenToUserEvent(e) {
+  listenToUserEvent() {
     const player = this.player;
-    const key = e.detail.keyPressed;
+    let dx = 0;
+    let dy = 0;
 
-    switch (key) {
-      case "ArrowUp":
-        player.y -= player.speed;
-        break;
-      case "ArrowDown":
-        player.y += player.speed;
-        break;
-      case "ArrowLeft":
-        player.x -= player.speed;
-        break;
-      case "ArrowRight":
-        player.x += player.speed;
-        break;
-    }
+    if (this.keys.has("ArrowUp")) dy -= player.speed;
+    if (this.keys.has("ArrowDown")) dy += player.speed;
+    if (this.keys.has("ArrowLeft")) dx -= player.speed;
+    if (this.keys.has("ArrowRight")) dx += player.speed;
+
+    player.x += dx;
+    player.y += dy;
   }
 
   createUserEvent(event) {
