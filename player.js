@@ -16,7 +16,7 @@ export default class Player extends Entity {
       width: 50,
       height: 50,
       color: this.colors.backgroundColor,
-      speed: 5,
+      speed: 1,
     };
 
     const handler = {

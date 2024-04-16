@@ -4,7 +4,7 @@ export default class Game {
     backgroundColor: "#1a1a1a",
   };
   lastFrameTime = performance.now(); // Timestamp of the last frame
-  frameInterval = 1000 / 60; // Target frame rate (60 FPS)
+  frameInterval = 2000 / 60; // Target frame rate (30 FPS)
   entities = [];
 
   constructor() {

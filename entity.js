@@ -8,9 +8,7 @@ export default class Entity {
     this.ctx.fillRect(entity.x, entity.y, entity.width, entity.height);
   }
 
-  // Override the update method to handle player-specific logic
-  update(deltaTime) {
-    // Example: Add gravity to the player's movement
+  update() {
     const gravity = 0.5;
     this.player.y += gravity;
   }
