@@ -15,7 +15,39 @@ class Game {
     this.setGameCanvasSize();
     this.drawCanvas();
 
-    this.createPlayerEntity();
+    this.player = {
+      name: "Jonah",
+      x: this.canvas.width / 2,
+      y: this.canvas.height / 2,
+      width: 0,
+      height: 50,
+      color: this.colors.playerColor,
+      dx: 1,
+      dy: 1,
+      speed: 5,
+    };
+
+    // Handler object with trap functions
+    const handler = {
+      get(player, property, receiver) {
+        console.log("get");
+        return Reflect.get(player, property, receiver);
+      },
+      set(player, property, value, receiver) {
+        console.log("set");
+        return Reflect.set(player, property, value, receiver);
+      },
+    };
+
+    // Create a reactive proxy
+    this.playerProxy = new Proxy(this.player, handler);
+
+    // Accessing a property triggers the "get" trap function
+    console.log(this.playerProxy.name); // Output: Getting name
+
+    // Modifying a property triggers the "set" trap function
+    this.playerProxy.width = 50;
+
     this.drawPlayer();
 
     window.addEventListener("keyup", this.listenToKeyUp.bind(this));
@@ -69,41 +101,6 @@ class Game {
     this.ctx = this.canvas.getContext("2d");
     this.ctx.fillStyle = this.colors.backgroundColor;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-  }
-
-  createPlayerEntity() {
-    this.player = {
-      name: "Jonah",
-      x: this.canvas.width / 2,
-      y: this.canvas.height / 2,
-      width: 0,
-      height: 50,
-      color: this.colors.playerColor,
-      dx: 1,
-      dy: 1,
-      speed: 5,
-    };
-
-    // Handler object with trap functions
-    const handler = {
-      get(player, property, receiver) {
-        console.log("get");
-        return Reflect.get(player, property, receiver);
-      },
-      set(player, property, value, receiver) {
-        console.log("set");
-        return Reflect.set(player, property, value, receiver);
-      },
-    };
-
-    // Create a reactive proxy
-    this.playerProxy = new Proxy(this.player, handler);
-
-    // Accessing a property triggers the "get" trap function
-    console.log(this.playerProxy.name); // Output: Getting name
-
-    // Modifying a property triggers the "set" trap function
-    this.playerProxy.width = 50;
   }
 
   drawPlayer() {
