@@ -1,4 +1,12 @@
 class Game {
+  inputRateLimitMs = 100;
+  entities = {};
+  keys = new Set();
+  colors = {
+    backgroundColor: "#1a1a1a",
+    playerColor: "#3ca4be",
+  };
+
   constructor() {
     this.root = document.getElementById("root");
     this.canvas = document.createElement("canvas");
@@ -10,9 +18,6 @@ class Game {
     this.createPlayerEntity();
     this.drawPlayer();
 
-    this.createEntities();
-    this.drawEntities();
-
     window.addEventListener("keyup", this.listenToKeyUp.bind(this));
     window.addEventListener("keydown", this.listenToKeyDown.bind(this));
     window.addEventListener("user", this.listenToUserEvent.bind(this));
@@ -23,7 +28,6 @@ class Game {
   }
 
   listenToKeyDown(e) {
-    if (this.keys.has(e.key)) return console.log("pressed this key already");
     this.keys.add(e.key);
     this.createUserEvent({ keyPressed: e.key });
   }
@@ -56,14 +60,6 @@ class Game {
     window.dispatchEvent(userEvent);
   }
 
-  inputRateLimitMs = 100;
-  entities = {};
-  keys = new Set();
-  colors = {
-    backgroundColor: "#1a1a1a",
-    playerColor: "#3ca4be",
-  };
-
   setGameCanvasSize() {
     this.canvas.width = window.innerWidth;
     this.canvas.height = window.innerHeight;
@@ -75,39 +71,39 @@ class Game {
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
   }
 
-  createEntities() {}
-
-  drawEntities() {
-    Object.keys(this.entities).forEach((entityId) => {
-      this.drawEntity(entityId);
-    });
-  }
-
-  updateEntityPos(entity) {
-    const clearX = Math.floor(entity.x - speed - 1);
-    const clearY = Math.floor(entity.y - speed - 1);
-    const clearWidth = entity.width + speed * 2 + 2;
-    const clearHeight = entity.height + speed * 2 + 2;
-    this.ctx.clearRect(clearX, clearY, clearWidth, clearHeight);
-  }
-
-  drawEntity(entityId) {
-    const entity = this.entities[entityId];
-    this.ctx.fillStyle = entity.color;
-    this.ctx.fillRect(entity.x, entity.y, entity.width, entity.height);
-  }
-
   createPlayerEntity() {
     this.player = {
+      name: "Jonah",
       x: this.canvas.width / 2,
       y: this.canvas.height / 2,
-      width: 50,
+      width: 0,
       height: 50,
       color: this.colors.playerColor,
       dx: 1,
       dy: 1,
       speed: 5,
     };
+
+    // Handler object with trap functions
+    const handler = {
+      get(player, property, receiver) {
+        console.log("get");
+        return Reflect.get(player, property, receiver);
+      },
+      set(player, property, value, receiver) {
+        console.log("set");
+        return Reflect.set(player, property, value, receiver);
+      },
+    };
+
+    // Create a reactive proxy
+    this.playerProxy = new Proxy(this.player, handler);
+
+    // Accessing a property triggers the "get" trap function
+    console.log(this.playerProxy.name); // Output: Getting name
+
+    // Modifying a property triggers the "set" trap function
+    this.playerProxy.width = 50;
   }
 
   drawPlayer() {
@@ -126,32 +122,9 @@ class Game {
     this.drawPlayer();
   }
 
-  respondToUserKeyPress(e) {
-    const player = this.player;
-
-    switch (e.key) {
-      case "ArrowUp":
-        player.y -= player.speed;
-        break;
-      case "ArrowDown":
-        player.y += player.speed;
-        break;
-      case "ArrowLeft":
-        player.x -= player.speed;
-        break;
-      case "ArrowRight":
-        player.x += player.speed;
-        break;
-    }
-
-    this.updatePlayerEntity();
-    this.drawPlayer();
-  }
-
   respondToViewportChanges() {
     this.setGameCanvasSize();
     this.drawCanvas();
-    this.drawEntities();
   }
 }
 
