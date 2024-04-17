@@ -15,6 +15,8 @@ export default class Entity {
   update(entity) {
     this.clear(entity);
     this.draw(entity);
+
+    // this.ctx.translate(entity.x, entity.y);
   }
 
   create({ entity, canvas }) {

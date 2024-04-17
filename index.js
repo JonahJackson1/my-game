@@ -29,6 +29,11 @@ import Player from "./player.js";
   player.proxy = new Proxy(playerObj, playerHandler);
   player.create({ entity: player.proxy, canvas: game.canvas });
 
+  window.addEventListener("resize", () => {
+    game.respondToViewportChanges();
+    player.update(player.proxy);
+  });
+
   window.addEventListener("keyup", player.listenToKeyUp.bind(player));
   window.addEventListener("keydown", player.listenToKeyDown.bind(player));
   window.addEventListener(
