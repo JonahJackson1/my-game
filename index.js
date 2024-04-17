@@ -21,7 +21,7 @@ import Player from "./player.js";
     },
     set: (target, property, value, receiver) => {
       Reflect.set(target, property, value, receiver);
-      player.update({ entity: player.proxy, canvas: game.canvas });
+      player.update(player.proxy);
       return true;
     },
   };

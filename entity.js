@@ -12,7 +12,7 @@ export default class Entity {
     this.ctx.clearRect(clearX, clearY, clearWidth, clearHeight);
   }
 
-  update({ entity, canvas }) {
+  update(entity) {
     this.clear(entity);
     this.draw(entity);
   }
