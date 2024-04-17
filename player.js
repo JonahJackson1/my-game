@@ -16,7 +16,7 @@ export default class Player extends Entity {
       width: 50,
       height: 50,
       color: this.colors.backgroundColor,
-      speed: 1,
+      speed: 5,
     };
 
     const handler = {
@@ -32,10 +32,6 @@ export default class Player extends Entity {
 
     this.player = new Proxy(this.playerObj, handler);
     this.draw(this.player);
-
-    window.addEventListener("keyup", this.listenToKeyUp.bind(this));
-    window.addEventListener("keydown", this.listenToKeyDown.bind(this));
-    window.addEventListener("user", this.listenToUserEvent.bind(this));
   }
 
   listenToKeyUp(e) {
@@ -44,10 +40,10 @@ export default class Player extends Entity {
 
   listenToKeyDown(e) {
     this.keys.add(e.key);
-    this.createUserEvent({ keyPressed: e.key });
+    this.createMovementEvent({ keyPressed: e.key });
   }
 
-  listenToUserEvent() {
+  listenToMovementEvent() {
     const player = this.player;
     let dx = 0;
     let dy = 0;
@@ -61,9 +57,9 @@ export default class Player extends Entity {
     player.y += dy;
   }
 
-  createUserEvent(event) {
-    const userEvent = new CustomEvent("user", { detail: event });
-    window.dispatchEvent(userEvent);
+  createMovementEvent(event) {
+    const movementEvent = new CustomEvent("movement", { detail: event });
+    window.dispatchEvent(movementEvent);
   }
 
   updatePlayer() {
