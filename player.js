@@ -9,29 +9,6 @@ export default class Player extends Entity {
   constructor(game) {
     super(game.canvas);
     this.canvas = game.canvas;
-    this.playerObj = {
-      name: "Jonah",
-      x: this.canvas.width / 2,
-      y: this.canvas.height / 2,
-      width: 50,
-      height: 50,
-      color: this.colors.backgroundColor,
-      speed: 5,
-    };
-
-    const handler = {
-      get: (player, property, receiver) => {
-        return Reflect.get(player, property, receiver);
-      },
-      set: (player, property, value, receiver) => {
-        Reflect.set(player, property, value, receiver);
-        this.update(this.player);
-        return true;
-      },
-    };
-
-    this.player = new Proxy(this.playerObj, handler);
-    this.draw(this.player);
   }
 
   listenToKeyUp(e) {
@@ -44,7 +21,7 @@ export default class Player extends Entity {
   }
 
   listenToMovementEvent() {
-    const player = this.player;
+    const player = this.proxy;
     let dx = 0;
     let dy = 0;
 
