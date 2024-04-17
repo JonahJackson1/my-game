@@ -15,4 +15,9 @@ export default class Entity {
     const clearHeight = entity.height + entity.speed * 3 + 2;
     this.ctx.clearRect(clearX, clearY, clearWidth, clearHeight);
   }
+
+  update(entity) {
+    this.clear(entity);
+    this.draw(entity);
+  }
 }

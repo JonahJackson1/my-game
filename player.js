@@ -25,7 +25,7 @@ export default class Player extends Entity {
       },
       set: (player, property, value, receiver) => {
         Reflect.set(player, property, value, receiver);
-        this.updatePlayer();
+        this.update(this.player);
         return true;
       },
     };
@@ -60,10 +60,5 @@ export default class Player extends Entity {
   createMovementEvent(event) {
     const movementEvent = new CustomEvent("movement", { detail: event });
     window.dispatchEvent(movementEvent);
-  }
-
-  updatePlayer() {
-    this.clear(this.player);
-    this.draw(this.player);
   }
 }
