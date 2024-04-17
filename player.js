@@ -6,11 +6,6 @@ export default class Player extends Entity {
   };
   keys = new Set();
 
-  constructor(game) {
-    super(game.canvas);
-    this.canvas = game.canvas;
-  }
-
   listenToKeyUp(e) {
     this.keys.delete(e.key);
   }

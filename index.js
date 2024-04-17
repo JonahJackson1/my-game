@@ -3,12 +3,12 @@ import Player from "./player.js";
 
 (function () {
   const game = new Game();
-  const player = new Player(game);
+  const player = new Player();
 
   const playerObj = {
     name: "Jonah",
-    x: player.canvas.width / 2,
-    y: player.canvas.height / 2,
+    x: game.canvas.width / 2,
+    y: game.canvas.height / 2,
     width: 50,
     height: 50,
     color: player.colors.backgroundColor,
@@ -21,13 +21,13 @@ import Player from "./player.js";
     },
     set: (target, property, value, receiver) => {
       Reflect.set(target, property, value, receiver);
-      player.update(player.proxy);
+      player.update({ entity: player.proxy, canvas: game.canvas });
       return true;
     },
   };
 
   player.proxy = new Proxy(playerObj, playerHandler);
-  player.update(player.proxy);
+  player.create({ entity: player.proxy, canvas: game.canvas });
 
   window.addEventListener("keyup", player.listenToKeyUp.bind(player));
   window.addEventListener("keydown", player.listenToKeyDown.bind(player));

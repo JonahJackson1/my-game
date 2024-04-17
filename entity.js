@@ -1,8 +1,4 @@
 export default class Entity {
-  constructor(canvas) {
-    this.ctx = canvas.getContext("2d");
-  }
-
   draw(entity) {
     this.ctx.fillStyle = entity.color;
     this.ctx.fillRect(entity.x, entity.y, entity.width, entity.height);
@@ -16,8 +12,13 @@ export default class Entity {
     this.ctx.clearRect(clearX, clearY, clearWidth, clearHeight);
   }
 
-  update(entity) {
+  update({ entity, canvas }) {
     this.clear(entity);
+    this.draw(entity);
+  }
+
+  create({ entity, canvas }) {
+    this.ctx = canvas.getContext("2d");
     this.draw(entity);
   }
 }
