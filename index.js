@@ -1,8 +1,12 @@
 import Game from "./game.js";
 import Player from "./player.js";
 
-(function () {
-  const game = new Game();
+(function initialize() {
+  const root = document.getElementById("root");
+  const canvas = document.createElement("canvas");
+  root.appendChild(canvas);
+
+  const game = new Game(canvas);
   const player = new Player();
 
   const playerObj = {
