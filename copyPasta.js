@@ -11,34 +11,44 @@ const rndI = (min, max) => Math.random() * (max - min) + min;
 const rndSize = (size) => [rndI(size * 0.2, size), rndI(size * 0.2, size)];
 const Vec2 = (x, y) => ({ x, y });
 const view = [1, 0, 0, 1, 0, 0]; // Matrix representing the view.
-const Obj = (pos, col, w, h) => ({ pos, col, w, h });
+const Obj = (position, color, width, height) => ({
+  position,
+  color,
+  width,
+  height,
+});
 const character = Obj(Vec2(0, 0), "#000", 20, 20); // position of character
 
-function setView(pos) {
-  view[4] = -pos.x + canvas.width * 0.5;
-  view[5] = -pos.y + canvas.height * 0.5;
+function setView(position) {
+  view[4] = -position.x + canvas.width * 0.5;
+  view[5] = -position.y + canvas.height * 0.5;
 }
 function applyView(view) {
   ctx.setTransform(...view);
 }
 
-function drawWorld(objs) {
-  for (const o of objs) {
-    ctx.fillStyle = o.col;
-    ctx.fillRect(o.pos.x - o.w * 0.5, o.pos.y - o.h * 0.5, o.w, o.h);
+function drawWorld(entities) {
+  for (const entity of entities) {
+    ctx.fillStyle = entity.color;
+    ctx.fillRect(
+      entity.position.x - entity.width * 0.5,
+      entity.position.y - entity.height * 0.5,
+      entity.width,
+      entity.height
+    );
   }
 }
 
 function renderLoop(time) {
   ctx.setTransform(1, 0, 0, 1, 0, 0); // set default transform to clear the canvas
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  time *= 0.2;
+  time *= 0.3;
   const pAngA = time / 1000;
   const pAngB = time / 337;
-  character.pos.x = Math.cos(pAngA) * 600 + Math.cos(pAngB) * 400;
-  character.pos.y = Math.sin(pAngA) * 600 + Math.sin(pAngB) * 400;
+  character.position.x = Math.sin(pAngA) * 600 + Math.sin(pAngB) * 400;
+  character.position.y = Math.cos(pAngA) * 600 + Math.cos(pAngB) * 400;
 
-  setView(character.pos);
+  setView(character.position);
   applyView(view);
   drawWorld(world);
 
