@@ -1,3 +1,5 @@
+// https://stackoverflow.com/questions/73736370/is-it-better-to-translate-to-whole-canvas-or-to-change-the-position-of-elements
+
 function generateRandomNumber(min, max) {
   return Math.random() * (max - min) + min;
 }
