@@ -66,11 +66,12 @@
       color: colors[randomColorIdx],
       width: generateRandomNumber(size * 0.2, size),
       height: generateRandomNumber(size * 0.2, size),
+      size,
     };
   }
 
   function createMonsterEntity() {
-    const randomSize = generateRandomNumber(10, 75);
+    const size = generateRandomNumber(10, 75);
     return {
       id: generateRandomNumber(1, 99999),
       position: {
@@ -78,9 +79,9 @@
         y: generateRandomNumber(-1000, 1000),
       },
       color: "#155c12",
-      width: randomSize,
-      height: randomSize,
-      size: randomSize,
+      width: size,
+      height: size,
+      size,
       speed: generateRandomNumber(0.5, 2.4),
       chase: true,
     };
