@@ -61,8 +61,8 @@ function createWorldEntity() {
   // array of world entities (objects)
   const world = [
     ...Array.from({ length: 60 }).map(() => createWorldEntity()),
-    monster,
     character,
+    monster,
   ];
 
   // set of e.key values
