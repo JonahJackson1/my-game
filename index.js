@@ -5,7 +5,7 @@ function generateRandomNumber(min, max) {
 }
 
 function createWorldEntity() {
-  const colors = ["#0AF", "#CA0", "#0A0", "#580"];
+  const colors = ["#0AF", "#CA0", "#558800"];
   const randomColorIdx = Math.trunc(Math.random() * colors.length);
 
   const size = generateRandomNumber(50, 1500); // px
@@ -39,14 +39,23 @@ function createWorldEntity() {
   // position of character
   const character = {
     position: { x: 0, y: 0 },
-    color: "#000",
+    color: "#F7F4EA",
     width: 20,
     height: 20,
-    speed: 5,
+    speed: 2.5,
   };
+
+  // const monster = {
+  //   position: { x: 50, y: 50 },
+  //   color: "#134611",
+  //   width: 20,
+  //   height: 20,
+  //   speed: 2.7,
+  // };
 
   const world = [
     ...Array.from({ length: 60 }).map(() => createWorldEntity()),
+    // monster,
     character,
   ];
 
@@ -104,14 +113,30 @@ function createWorldEntity() {
 
     let dx = character.position.x;
     let dy = character.position.y;
+    // let mdx = monster.position.x;
+    // let mdy = monster.position.y;
 
-    if (keysPressed.has("ArrowUp")) dy -= character.speed;
-    if (keysPressed.has("ArrowDown")) dy += character.speed;
-    if (keysPressed.has("ArrowLeft")) dx -= character.speed;
-    if (keysPressed.has("ArrowRight")) dx += character.speed;
+    if (keysPressed.has("ArrowUp")) {
+      dy -= character.speed;
+      // mdy -= monster.speed;
+    }
+    if (keysPressed.has("ArrowDown")) {
+      dy += character.speed;
+      // mdy += monster.speed;
+    }
+    if (keysPressed.has("ArrowLeft")) {
+      dx -= character.speed;
+      // mdx -= monster.speed;
+    }
+    if (keysPressed.has("ArrowRight")) {
+      dx += character.speed;
+      // mdx += monster.speed;
+    }
 
     character.position.x = dx;
     character.position.y = dy;
+    // monster.position.x = mdx;
+    // monster.position.y = mdy;
 
     setView(character.position);
     applyView(view);
