@@ -66,7 +66,6 @@
       color: colors[randomColorIdx],
       width: generateRandomNumber(size * 0.2, size),
       height: generateRandomNumber(size * 0.2, size),
-      size,
     };
   }
 
@@ -81,7 +80,6 @@
       color: "#155c12",
       width: size,
       height: size,
-      size,
       speed: generateRandomNumber(0.5, 2.4),
       chase: true,
     };
@@ -94,7 +92,6 @@
       color: "#F7F4EA",
       width: 20,
       height: 20,
-      size: 20,
       speed: 2.5,
       health: 100,
     };
@@ -145,7 +142,7 @@
       (entity1.position.x - entity2.position.x) ** 2 +
         (entity1.position.y - entity2.position.y) ** 2
     );
-    const threshold = entity1.size / 2 + entity2.size / 2;
+    const threshold = entity1.width / 2 + entity2.height / 2;
     return distance < threshold;
   }
 
