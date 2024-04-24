@@ -168,6 +168,10 @@
       if (isIntersecting(character, monster)) {
         const newMonster = createMonsterEntity();
 
+        // black hole logic
+        // character.width += monster.width;
+        // character.height += monster.height;
+
         monsters = monsters.map((curMonster) =>
           curMonster.id === monster.id ? newMonster : curMonster
         );
