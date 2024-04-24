@@ -34,7 +34,7 @@ function createMonsterEntity() {
     width: randomSize,
     height: randomSize,
     size: randomSize,
-    speed: generateRandomNumber(0.5, 3),
+    speed: generateRandomNumber(0.5, 2.4),
     chase: true,
   };
 }
