@@ -1,57 +1,5 @@
 // https://stackoverflow.com/questions/73736370/is-it-better-to-translate-to-whole-canvas-or-to-change-the-position-of-elements
 
-function generateRandomNumber(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
-function createWorldEntity() {
-  const colors = ["#62cd47", "#50A4DA", "#ddc62e", "#877568"];
-  const randomColorIdx = Math.trunc(Math.random() * colors.length);
-
-  const size = generateRandomNumber(50, 1500); // px
-
-  return {
-    id: generateRandomNumber(1, 99999),
-    position: {
-      x: generateRandomNumber(-1500, 1500),
-      y: generateRandomNumber(-1500, 1500),
-    },
-    color: colors[randomColorIdx],
-    width: generateRandomNumber(size * 0.2, size),
-    height: generateRandomNumber(size * 0.2, size),
-  };
-}
-
-function createMonsterEntity() {
-  const randomSize = generateRandomNumber(10, 75);
-  return {
-    id: generateRandomNumber(1, 99999),
-    position: {
-      x: generateRandomNumber(-1000, 1000),
-      y: generateRandomNumber(-1000, 1000),
-    },
-    color: "#155c12",
-    width: randomSize,
-    height: randomSize,
-    size: randomSize,
-    speed: generateRandomNumber(0.5, 2.4),
-    chase: true,
-  };
-}
-
-function createPlayerEntity() {
-  return {
-    id: generateRandomNumber(1, 99999),
-    position: { x: 0, y: 0 },
-    color: "#F7F4EA",
-    width: 20,
-    height: 20,
-    size: 20,
-    speed: 2.5,
-    health: 100,
-  };
-}
-
 (function initialize() {
   const root = document.getElementById("root");
   const canvas = document.createElement("canvas");
@@ -98,6 +46,58 @@ function createPlayerEntity() {
     if (keysPressed.has(e.key)) return;
     keysPressed.add(e.key);
   });
+
+  function generateRandomNumber(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  function createWorldEntity() {
+    const colors = ["#62cd47", "#50A4DA", "#ddc62e", "#877568"];
+    const randomColorIdx = Math.trunc(Math.random() * colors.length);
+
+    const size = generateRandomNumber(50, 1500); // px
+
+    return {
+      id: generateRandomNumber(1, 99999),
+      position: {
+        x: generateRandomNumber(-1500, 1500),
+        y: generateRandomNumber(-1500, 1500),
+      },
+      color: colors[randomColorIdx],
+      width: generateRandomNumber(size * 0.2, size),
+      height: generateRandomNumber(size * 0.2, size),
+    };
+  }
+
+  function createMonsterEntity() {
+    const randomSize = generateRandomNumber(10, 75);
+    return {
+      id: generateRandomNumber(1, 99999),
+      position: {
+        x: generateRandomNumber(-1000, 1000),
+        y: generateRandomNumber(-1000, 1000),
+      },
+      color: "#155c12",
+      width: randomSize,
+      height: randomSize,
+      size: randomSize,
+      speed: generateRandomNumber(0.5, 2.4),
+      chase: true,
+    };
+  }
+
+  function createPlayerEntity() {
+    return {
+      id: generateRandomNumber(1, 99999),
+      position: { x: 0, y: 0 },
+      color: "#F7F4EA",
+      width: 20,
+      height: 20,
+      size: 20,
+      speed: 2.5,
+      health: 100,
+    };
+  }
 
   function setView(position) {
     view.translateX = -position.x + canvas.width * 0.5;
