@@ -48,13 +48,12 @@
   });
 
   function generateRandomNumber(min, max) {
-    return Math.random() * (max - min) + min;
+    return Math.round(Math.random() * (max - min) + min);
   }
 
   function createWorldEntity() {
     const colors = ["#62cd47", "#50A4DA", "#ddc62e", "#877568"];
-    const randomColorIdx = Math.trunc(Math.random() * colors.length);
-
+    const randomColorIdx = generateRandomNumber(0, colors.length - 1);
     const size = generateRandomNumber(50, 1500); // px
 
     return {
@@ -70,7 +69,7 @@
   }
 
   function createMonsterEntity() {
-    const size = generateRandomNumber(10, 75);
+    const size = generateRandomNumber(10, 75); // px
     return {
       id: generateRandomNumber(1, 99999),
       position: {
