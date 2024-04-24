@@ -140,16 +140,6 @@
     entity.position.y += dy;
   }
 
-  function determineDirection(keysPressed) {
-    let dx = 0;
-    let dy = 0;
-    if (keysPressed.has("ArrowUp")) dy -= 1;
-    if (keysPressed.has("ArrowDown")) dy += 1;
-    if (keysPressed.has("ArrowLeft")) dx -= 1;
-    if (keysPressed.has("ArrowRight")) dx += 1;
-    return { dx, dy };
-  }
-
   function isIntersecting(entity1, entity2) {
     const distance = Math.sqrt(
       (entity1.position.x - entity2.position.x) ** 2 +
@@ -165,7 +155,12 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // character movement
-    const { dx, dy } = determineDirection(keysPressed);
+    let dx = 0;
+    let dy = 0;
+    if (keysPressed.has("ArrowUp")) dy -= 1;
+    if (keysPressed.has("ArrowDown")) dy += 1;
+    if (keysPressed.has("ArrowLeft")) dx -= 1;
+    if (keysPressed.has("ArrowRight")) dx += 1;
     updatePosition(character, dx, dy, character.speed);
 
     // monster movement
