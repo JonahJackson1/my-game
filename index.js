@@ -23,20 +23,22 @@ function createWorldEntity() {
 }
 
 function createMonsterEntity() {
+  const randomSize = generateRandomNumber(10, 75);
   return {
     id: generateRandomNumber(1, 99999),
     position: {
-      x: generateRandomNumber(1, 1000),
-      y: generateRandomNumber(1, 1000),
+      x: generateRandomNumber(-1000, 1000),
+      y: generateRandomNumber(-1000, 1000),
     },
     color: "#155c12",
-    width: 20,
-    height: 20,
-    size: 20,
-    speed: 1,
+    width: randomSize,
+    height: randomSize,
+    size: randomSize,
+    speed: generateRandomNumber(0.5, 3),
     chase: true,
   };
 }
+
 function createPlayerEntity() {
   return {
     id: generateRandomNumber(1, 99999),
@@ -67,7 +69,7 @@ function createPlayerEntity() {
 
   const character = createPlayerEntity();
   let monsters = [
-    ...Array.from({ length: 6 }).map(() => createMonsterEntity()),
+    ...Array.from({ length: 15 }).map(() => createMonsterEntity()),
   ];
   let world = [
     ...Array.from({ length: 60 }).map(() => createWorldEntity()),
