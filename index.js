@@ -26,7 +26,7 @@ function createWorldEntity() {
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
 
-  // current view of canvas
+  // details of canvas view
   const view = {
     scaleX: 1,
     skewX: 0,
@@ -36,45 +36,53 @@ function createWorldEntity() {
     translateY: 0,
   };
 
-  // position of character
+  // details of character
   const character = {
     position: { x: 0, y: 0 },
     color: "#F7F4EA",
     width: 20,
     height: 20,
     speed: 2.5,
+    health: 100,
   };
 
-  // const monster = {
-  //   position: { x: 50, y: 50 },
-  //   color: "#134611",
-  //   width: 20,
-  //   height: 20,
-  //   speed: 2.7,
-  // };
+  // details of monster
+  const monster = {
+    position: {
+      x: generateRandomNumber(1, 1000),
+      y: generateRandomNumber(1, 1000),
+    },
+    color: "#134611",
+    width: 20,
+    height: 20,
+    speed: 0.5,
+  };
 
+  // array of world entities (objects)
   const world = [
     ...Array.from({ length: 60 }).map(() => createWorldEntity()),
-    // monster,
+    monster,
     character,
   ];
 
+  // set of e.key values
   const keysPressed = new Set();
 
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   root.appendChild(canvas);
 
+  // start game render loop
   requestAnimationFrame(renderLoop);
 
-  window.addEventListener("resize", () => {
+  window.addEventListener("resize", function () {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
-  window.addEventListener("keyup", (e) => {
+  window.addEventListener("keyup", function (e) {
     keysPressed.delete(e.key);
   });
-  window.addEventListener("keydown", (e) => {
+  window.addEventListener("keydown", function (e) {
     keysPressed.add(e.key);
   });
 
@@ -106,42 +114,52 @@ function createWorldEntity() {
     }
   }
 
-  function renderLoop(time) {
-    ctx.setTransform(1, 0, 0, 1, 0, 0); // set default transform to clear the canvas
+  function renderLoop() {
+    // set default transform to clear the canvas
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    time *= 0.3;
 
-    let dx = character.position.x;
-    let dy = character.position.y;
-    // let mdx = monster.position.x;
-    // let mdy = monster.position.y;
+    const curPlayerX = character.position.x;
+    const curPlayerY = character.position.y;
+    let dx = curPlayerX;
+    let dy = curPlayerY;
 
-    if (keysPressed.has("ArrowUp")) {
-      dy -= character.speed;
-      // mdy -= monster.speed;
-    }
-    if (keysPressed.has("ArrowDown")) {
-      dy += character.speed;
-      // mdy += monster.speed;
-    }
-    if (keysPressed.has("ArrowLeft")) {
-      dx -= character.speed;
-      // mdx -= monster.speed;
-    }
-    if (keysPressed.has("ArrowRight")) {
-      dx += character.speed;
-      // mdx += monster.speed;
-    }
+    if (keysPressed.has("ArrowUp")) dy -= character.speed;
+    if (keysPressed.has("ArrowDown")) dy += character.speed;
+    if (keysPressed.has("ArrowLeft")) dx -= character.speed;
+    if (keysPressed.has("ArrowRight")) dx += character.speed;
 
     character.position.x = dx;
     character.position.y = dy;
-    // monster.position.x = mdx;
-    // monster.position.y = mdy;
+
+    const curMonsterX = monster.position.x;
+    const curMonsterY = monster.position.y;
+    let mdx = curMonsterX;
+    let mdy = curMonsterY;
+
+    const characterIsToLeft = curPlayerX - curMonsterX < 0;
+    const characterIsAbove = curPlayerY - curMonsterY < 0;
+
+    // monster run towards
+    if (characterIsToLeft) mdx -= monster.speed;
+    if (!characterIsToLeft) mdx += monster.speed;
+    if (characterIsAbove) mdy -= monster.speed;
+    if (!characterIsAbove) mdy += monster.speed;
+
+    // monster run away
+    // if (characterIsToLeft) mdx += monster.speed;
+    // if (!characterIsToLeft) mdx -= monster.speed;
+    // if (characterIsAbove) mdy += monster.speed;
+    // if (!characterIsAbove) mdy -= monster.speed;
+
+    monster.position.x = mdx;
+    monster.position.y = mdy;
 
     setView(character.position);
     applyView(view);
     drawWorld(world);
 
-    requestAnimationFrame(renderLoop);
+    const fps = 1000 / 60; // 1 second divided by 60 frames
+    setTimeout(() => requestAnimationFrame(renderLoop), fps);
   }
 })();
