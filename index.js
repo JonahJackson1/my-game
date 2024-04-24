@@ -5,12 +5,13 @@ function generateRandomNumber(min, max) {
 }
 
 function createWorldEntity() {
-  const colors = ["#0AF", "#CA0", "#558800"];
+  const colors = ["#62cd47", "#50A4DA", "#ddc62e", "#877568"];
   const randomColorIdx = Math.trunc(Math.random() * colors.length);
 
   const size = generateRandomNumber(50, 1500); // px
 
   return {
+    id: generateRandomNumber(1, 99999),
     position: {
       x: generateRandomNumber(-1500, 1500),
       y: generateRandomNumber(-1500, 1500),
@@ -18,6 +19,34 @@ function createWorldEntity() {
     color: colors[randomColorIdx],
     width: generateRandomNumber(size * 0.2, size),
     height: generateRandomNumber(size * 0.2, size),
+  };
+}
+
+function createMonsterEntity() {
+  return {
+    id: generateRandomNumber(1, 99999),
+    position: {
+      x: generateRandomNumber(1, 1000),
+      y: generateRandomNumber(1, 1000),
+    },
+    color: "#155c12",
+    width: 20,
+    height: 20,
+    size: 20,
+    speed: 1,
+    chase: true,
+  };
+}
+function createPlayerEntity() {
+  return {
+    id: generateRandomNumber(1, 99999),
+    position: { x: 0, y: 0 },
+    color: "#F7F4EA",
+    width: 20,
+    height: 20,
+    size: 20,
+    speed: 2.5,
+    health: 100,
   };
 }
 
@@ -36,33 +65,14 @@ function createWorldEntity() {
     translateY: 0,
   };
 
-  // details of character
-  const character = {
-    position: { x: 0, y: 0 },
-    color: "#F7F4EA",
-    width: 20,
-    height: 20,
-    speed: 2.5,
-    health: 100,
-  };
-
-  // details of monster
-  const monster = {
-    position: {
-      x: generateRandomNumber(1, 1000),
-      y: generateRandomNumber(1, 1000),
-    },
-    color: "#134611",
-    width: 20,
-    height: 20,
-    speed: 0.5,
-  };
-
-  // array of world entities (objects)
-  const world = [
+  const character = createPlayerEntity();
+  let monsters = [
+    ...Array.from({ length: 6 }).map(() => createMonsterEntity()),
+  ];
+  let world = [
     ...Array.from({ length: 60 }).map(() => createWorldEntity()),
     character,
-    monster,
+    ...monsters,
   ];
 
   // set of e.key values
@@ -72,8 +82,8 @@ function createWorldEntity() {
   canvas.height = window.innerHeight;
   root.appendChild(canvas);
 
-  // start game render loop
-  requestAnimationFrame(renderLoop);
+  // start game loop
+  requestAnimationFrame(gameLoop);
 
   window.addEventListener("resize", function () {
     canvas.width = window.innerWidth;
@@ -83,6 +93,7 @@ function createWorldEntity() {
     keysPressed.delete(e.key);
   });
   window.addEventListener("keydown", function (e) {
+    if (keysPressed.has(e.key)) return;
     keysPressed.add(e.key);
   });
 
@@ -114,52 +125,73 @@ function createWorldEntity() {
     }
   }
 
-  function renderLoop() {
+  function updatePosition(entity, dx, dy, speed) {
+    // normalize movement if diagonal to maintain consistent speed
+    const length = Math.sqrt(dx * dx + dy * dy);
+    if (length > 0) {
+      dx = (dx / length) * speed;
+      dy = (dy / length) * speed;
+    }
+
+    entity.position.x += dx;
+    entity.position.y += dy;
+  }
+
+  function determineDirection(keysPressed) {
+    let dx = 0;
+    let dy = 0;
+    if (keysPressed.has("ArrowUp")) dy -= 1;
+    if (keysPressed.has("ArrowDown")) dy += 1;
+    if (keysPressed.has("ArrowLeft")) dx -= 1;
+    if (keysPressed.has("ArrowRight")) dx += 1;
+    return { dx, dy };
+  }
+
+  function isIntersecting(entity1, entity2) {
+    const distance = Math.sqrt(
+      (entity1.position.x - entity2.position.x) ** 2 +
+        (entity1.position.y - entity2.position.y) ** 2
+    );
+    const threshold = entity1.size / 2 + entity2.size / 2;
+    return distance < threshold;
+  }
+
+  function gameLoop() {
     // set default transform to clear the canvas
     ctx.setTransform(1, 0, 0, 1, 0, 0);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    const curPlayerX = character.position.x;
-    const curPlayerY = character.position.y;
-    let dx = curPlayerX;
-    let dy = curPlayerY;
+    // character movement
+    const { dx, dy } = determineDirection(keysPressed);
+    updatePosition(character, dx, dy, character.speed);
 
-    if (keysPressed.has("ArrowUp")) dy -= character.speed;
-    if (keysPressed.has("ArrowDown")) dy += character.speed;
-    if (keysPressed.has("ArrowLeft")) dx -= character.speed;
-    if (keysPressed.has("ArrowRight")) dx += character.speed;
+    // monster movement
+    for (const monster of monsters) {
+      const mdx = character.position.x - monster.position.x;
+      const mdy = character.position.y - monster.position.y;
+      const monsterSpeed = monster.chase ? monster.speed : -monster.speed;
 
-    character.position.x = dx;
-    character.position.y = dy;
+      if (isIntersecting(character, monster)) {
+        const newMonster = createMonsterEntity();
 
-    const curMonsterX = monster.position.x;
-    const curMonsterY = monster.position.y;
-    let mdx = curMonsterX;
-    let mdy = curMonsterY;
+        monsters = monsters.map((curMonster) =>
+          curMonster.id === monster.id ? newMonster : curMonster
+        );
 
-    const characterIsToLeft = curPlayerX - curMonsterX < 0;
-    const characterIsAbove = curPlayerY - curMonsterY < 0;
+        world = world.map((entity) =>
+          entity.id === monster.id ? newMonster : entity
+        );
+        continue;
+      }
 
-    // monster run towards
-    if (characterIsToLeft) mdx -= monster.speed;
-    if (!characterIsToLeft) mdx += monster.speed;
-    if (characterIsAbove) mdy -= monster.speed;
-    if (!characterIsAbove) mdy += monster.speed;
-
-    // monster run away
-    // if (characterIsToLeft) mdx += monster.speed;
-    // if (!characterIsToLeft) mdx -= monster.speed;
-    // if (characterIsAbove) mdy += monster.speed;
-    // if (!characterIsAbove) mdy -= monster.speed;
-
-    monster.position.x = mdx;
-    monster.position.y = mdy;
+      updatePosition(monster, mdx < 0 ? -1 : 1, mdy < 0 ? -1 : 1, monsterSpeed);
+    }
 
     setView(character.position);
     applyView(view);
     drawWorld(world);
 
     const fps = 1000 / 60; // 1 second divided by 60 frames
-    setTimeout(() => requestAnimationFrame(renderLoop), fps);
+    setTimeout(() => requestAnimationFrame(gameLoop), fps);
   }
 })();
