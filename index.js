@@ -168,10 +168,16 @@
       if (isIntersecting(character, monster)) {
         const newMonster = createMonsterEntity();
 
-        // black hole logic
-        // character.width += monster.width;
-        // character.height += monster.height;
+        // // black hole logic
+        // if (character.width < 200 || character.height < 200) {
+        //   character.width += monster.width * 0.3;
+        //   character.height += monster.height * 0.3;
+        // }
 
+        // shrink monster logic
+        monster.width -= character.width;
+        monster.height -= character.height;
+        if (monster.width > 0 || monster.height > 0) continue;
         monsters = monsters.map((curMonster) =>
           curMonster.id === monster.id ? newMonster : curMonster
         );
@@ -179,7 +185,6 @@
         world = world.map((entity) =>
           entity.id === monster.id ? newMonster : entity
         );
-        continue;
       }
 
       updatePosition(monster, mdx < 0 ? -1 : 1, mdy < 0 ? -1 : 1, monsterSpeed);
